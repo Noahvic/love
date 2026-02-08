@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Você 💌</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0b1021, #1b264f, #2b3a67);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Corações no fundo */
+        .bg-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-heart {
+            position: absolute;
+            color: rgba(255, 192, 203, 0.6);
+            font-size: 24px;
+            animation: floatUp linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 60px;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background: #ff6b81;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        /* Interior do envelope */
+        .envelope-wrapper::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ff4757;
+            z-index: 1;
+        }
+
+        /* A CARTA (Ajustada para não cortar o texto) */
+        .letter {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 90%;
+            height: 95%; /* Ocupa quase todo o envelope inicialmente */
+            background: #ffebee; /* Rosa bem clarinho */
+            transform: translateX(-50%) translateY(0);
+            transition: transform 1s ease-in-out, z-index 0.1s;
+            z-index: 2;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .letter h2 {
+            font-family: 'Dancing Script', cursive;
+            color: #d63031;
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .letter p {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 6px;
+        }
+        
+        .letter .highlight {
+            font-weight: bold;
+            color: #e84393;
+        }
+
+        .letter .ring-text {
+            font-size: 11px;
+            color: #777;
+            margin-top: 8px;
+            font-style: italic;
+            border-top: 1px solid #ffccd5;
+            padding-top: 5px;
+            width: 100%;
+        }
+
+        /* Abas do envelope */
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 110px solid #ff7b93;
+            z-index: 4;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out, z-index 0.6s;
+        }
+
+        .pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid #ff6b81;
+            border-right: 150px solid #ff6b81;
+            border-bottom: 100px solid #ff5e78;
+            border-top: 100px solid transparent;
+            z-index: 3;
+            border-radius: 0 0 5px 5px;
+        }
+
+        /* ANIMAÇÃO DE ABERTURA */
+        .container.open .flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .container.open .letter {
+            /* Sobe mais alto para mostrar todo o texto */
+            transform: translateX(-50%) translateY(-230px); 
+            z-index: 5;
+            transition-delay: 0.5s;
+            height: auto; /* Permite que a carta cresça se precisar */
+            min-height: 250px; /* Garante tamanho mínimo bonito */
+        }
+
+        /* Botão */
+        .btn-open {
+            margin-top: 50px;
+            padding: 12px 30px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            z-index: 20;
+        }
+
+        .btn-open:hover {
+            transform: scale(1.05);
+            background: #ff2e43;
+        }
+
+        .btn-open.hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-hearts" id="heartsContainer"></div>
+
+    <div class="container" id="envelopeContainer">
+        <div class="envelope-wrapper">
+            <div class="flap"></div>
+            <div class="pocket"></div>
+            
+            <div class="letter">
+                <h2>💌 Para você 💌</h2>
+                <p>Eu te amo muito <span class="highlight">💍🤍</span></p>
+                <p>Te amo no cuidado,<br>no silêncio e no riso.</p>
+                <p class="ring-text">Vou te dar um desse ainda 💍🙇‍♂️</p>
+            </div>
+        </div>
+        
+        <button class="btn-open" onclick="openLetter()">Abrir 💖</button>
+    </div>
+
+    <audio id="bgMusic" src="music.mp3"></audio>
+
+    <script>
+        // Criar corações
+        function createHearts() {
+            const heartsContainer = document.getElementById('heartsContainer');
+            const heartCount = 45; 
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('bg-heart');
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heartsContainer.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // Abrir carta e tocar música
+        function openLetter() {
+            const container = document.getElementById('envelopeContainer');
+            const btn = document.querySelector('.btn-open');
+            const music = document.getElementById('bgMusic');
+
+            container.classList.add('open');
+            btn.classList.add('hidden');
+
+            // Tenta tocar a música
+            if (music) {
+                music.volume = 0.5; // Volume em 50% para não assustar
+                music.play().catch(error => {
+                    console.log("Para tocar, o usuário precisa ter interagido com a página.");
+                });
+            }
+        }
+    </script>
+</body>
+</html>
